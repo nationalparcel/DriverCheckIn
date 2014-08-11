@@ -1,0 +1,280 @@
+<html>
+<head>
+	<link rel="stylesheet" href="../Scripts/jqueryUI/DataTables-1.9.4/TableTools/css/dataTables.tableTools.min.css" type="text/css" media="all" />   
+	<link rel="stylesheet" href="//nplweb.net/nplweb/Scripts/jqueryUI/DataTables-1.9.4/css/jquery.dataTables_themeroller.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="../Scripts/jquery-ui-1.8rc3.custom/css/smoothness/jquery-ui-1.8rc3.custom.css" type="text/css" media="all" />
+	<script src="../Scripts/jquery-ui-1.8rc3.custom/js/jquery-1.4.2.min.js" type="text/javascript"></script>
+	<script src="../Scripts/jquery-ui-1.8rc3.custom/js/jquery-ui-1.8rc3.custom.min.js" type="text/javascript"></script>
+	<script src="../Scripts/jquery.SPServices-0.7.2.min.js" type="text/javascript"></script>
+	<script src="../Scripts/jqueryUI/DataTables-1.9.4/js/jquery.dataTables.min.js" type="text/javascript"></script>
+</head>
+<body>
+	<br><br>
+	<div id="facSelect">
+		<input type="radio" id="atlRadio" value="ATL" name="facSelect"/><label for="atlRadio">ATL</label>
+		<input type="radio" id="bdlRadio" value="BDL" name="facSelect"/><label for="bdlRadio">BDL</label>
+		<input type="radio" id="bwiRadio" value="BWI" name="facSelect"/><label for="bwiRadio">BWI</label>
+		<input type="radio" id="laxRadio" value="LAX" name="facSelect"/><label for="laxRadio">LAX</label>
+		<input type="radio" id="mcoRadio" value="MCO" name="facSelect"/><label for="mcoRadio">MCO</label>
+		<input type="radio" id="MIARadio" value="MIA" name="facSelect"/><label for="MIARadio">MIA</label>
+		<input type="radio" id="tpaRadio" value="TPA" name="facSelect"/><label for="tpaRadio">TPA</label>
+	</div>
+	<br><br>
+	<table id='atlDriverCheckinTable' style='text-align:center'>
+		<thead>
+			<tr>
+				<th>Load</th>
+				<th>Carrier</th>
+				<th>Pickup Date/Time</th>
+				<th>Driver Type</th>
+				<th>Tractor#</th>
+				<th>Trailor#</th>
+				<th>Tag#</th>
+				<th>Drivers Name</th>
+				<th>Drivers Phone</th>
+				<th>BOL Scanned</th>
+				<th>Estimated Cost</th>
+				<th>Check Driver In</th>
+			</tr>
+		</thead>
+	</table>
+</body>
+</html>
+
+<script>
+function convertDate (date)
+{
+	month = date.split('-')[1];
+	day = date.split('-')[2];
+	year = date.split('-')[0];
+	year = year.slice(2,4);
+	if ( month.slice(0,1) == "0" );
+	{
+		month = month.replace('0','')
+	}
+	newDate = month + day + year;
+	return newDate;
+}
+
+function btnTest(id)
+{
+	function validationDCI( _ID )
+	{
+		tractorNumber = $( "#tractorNumber" +_ID ).val();
+		trailerNumber = $( "#trailerNumber" +_ID ).val();
+		tagNumber = $( "#tagNumber" +_ID ).val();
+		driverName = $( "#driverName" +_ID ).val();
+		driverPhone = $( "#driverPhone" +_ID ).val();
+		bolScanned = $( "#bolScanned" +_ID ).text();
+		
+		if( tractorNumber == "" )
+		{
+			return "Please fill in Tractor Number";
+		}
+		if( trailerNumber == "" )
+		{
+			return "Please fill in Trailer Number";
+		}
+		if( tagNumber == "" )
+		{
+			return "Please fill in Tag Number";
+		}
+		if( driverName == "" )
+		{
+			return "Please fill in Driver Name";
+		}
+		if( driverPhone == "" )
+		{
+			return "Please fill in Driver Phone";
+		}
+		if( bolScanned == "No" )
+		{
+			return "Please Scan BOL";
+		}
+		
+		$().SPServices(
+		{
+			operation: "UpdateListItems",
+			async: false,
+			batchCmd: "Update",
+			listName: "TL Dashboard",
+			ID: _ID,
+			valuepairs: [["Tractor_x0020__x0023_", tractorNumber], 
+							["Trailor_x0023_", trailerNumber],
+							["Tag_x0023_", tagNumber],
+							["Drivers_x0020_Name", driverName],
+							["Drivers_x0020_Phone", driverPhone],
+							["DriverCheckinComplete", "1"]
+						],
+			completefunc: function( xData, Status )
+			{
+				getData();
+			}
+		});
+		return true;
+	}
+
+
+	writeToSP = validationDCI(id);
+	if( writeToSP != true )
+	{
+		alert( writeToSP );
+	}
+	else
+	{
+	}	
+}
+
+function getData()
+		{
+			atlDriverCheckin.fnClearTable();
+			$().SPServices(
+			{
+				operation: "GetListItems",
+				async: false,
+				listName: "TL Dashboard",
+				CAMLViewFields: "<ViewFields>"+
+									"<FieldRef Name='ID'/>"+
+									"<FieldRef Name='Title'/>"+
+									"<FieldRef Name='Carrier_x0020_Name'/>"+
+									"<FieldRef Name='Pickup_x0020_Date'/>"+
+									"<FieldRef Name='Driver_x0020_Team_x003f_'/>"+
+									"<FieldRef Name='Tractor_x0020__x0023_'/>"+
+									"<FieldRef Name='Trailor_x0023_'/>"+
+									"<FieldRef Name='Tag_x0023_'/>"+
+									"<FieldRef Name='Drivers_x0020_Name'/>"+
+									"<FieldRef Name='Drivers_x0020_Phone'/>"+
+									"<FieldRef Name='Total_x0020_Agreed_x0020_Rate_x0'/>"+
+									"<FieldRef Name='Driver_x0020_info_x0020_confirme'/>"+
+								"</ViewFields>",
+				CAMLQuery:  "<Query>"+
+								"<Where>"+
+									"<And><And><And>"+
+										"<Eq>"+
+											"<FieldRef Name='MO'/>"+
+											"<Value Type='Text'>"+ $( "input[name='facSelect']:checked" ).val() +"</Value>"+
+										"</Eq>"+
+										"<Eq>"+
+											"<FieldRef Name='DriverCheckinComplete'/>"+
+											"<Value Type='Text'>FALSE</Value>"+
+										"</Eq>"+
+									"</And>"+
+										"<Neq>"+
+											"<FieldRef Name='Carrier_x0020_Name'/>"+
+											"<Value Type='Text'>NPL DEDICATED, LLC</Value>"+
+										"</Neq>"+
+									"</And>"+
+										"<Neq>"+
+											"<FieldRef Name='Driver_x0020_Team_x003f_'/>"+
+											"<Value Type='Text'>Bypassed TL Dashboard</Value>"+
+										"</Neq>"+
+									"</And>"+
+								"</Where>"+
+							"</Query>",
+				completefunc: function( xData, Status )
+				{
+					$(xData.responseXML).SPFilterNode("z:row").each(function()
+					{
+						id = $(this).attr("ows_ID");
+						loadNumber = $(this).attr("ows_Title");
+						carrierName = $(this).attr("ows_Carrier_x0020_Name");
+						pickUpTime = $(this).attr("ows_Pickup_x0020_Date");
+						driverType = $(this).attr("ows_Driver_x0020_Team_x003f_");
+						tractorNumber = $(this).attr("ows_Tractor_x0020__x0023_");
+						trailerNumber = $(this).attr("ows_Trailor_x0023_");
+						tagNumber = $(this).attr("ows_Tag_x0023_");
+						driverName = $(this).attr("ows_Drivers_x0020_Name");
+						driverPhone = $(this).attr("ows_Drivers_x0020_Phone");
+						estimatedCost = $(this).attr("ows_Total_x0020_Agreed_x0020_Rate_x0");
+						bolScanned = $(this).attr("ows_Driver_x0020_info_x0020_confirme");
+						
+						loadNumber = nullResponses(loadNumber);
+						carrierName = nullResponses(carrierName);
+						pickUpTime = nullResponses(pickUpTime);
+						driverType = nullResponses(driverType);
+						tractorNumber = nullResponses(tractorNumber);
+						trailerNumber = nullResponses(trailerNumber);
+						tagNumber = nullResponses(tagNumber);
+						driverName = nullResponses(driverName);
+						driverPhone = nullResponses(driverPhone);
+						estimatedCost = nullResponses(estimatedCost);
+						bolScanned = nullResponses(bolScanned);
+						
+						if( bolScanned == "0" )
+						{
+							bolScanned = "<span id='bolScanned"+ id +"'>No</span>";
+						}
+						else
+						{
+							bolScanned = "<span id='bolScanned"+ id +"'>Yes</span>";
+						}
+						if( pickUpTime != "" )
+						{
+							//pickUpTime = convertDate( pickUpTime );
+						}
+						if( estimatedCost != "" )
+						{
+							estimatedCost = "$" + estimatedCost.split( "." )[0];
+						}
+						
+						tractorNumber = "<input id='tractorNumber"+ id +"' type='text' value='"+ tractorNumber +"'/>";
+						trailerNumber = "<input id='trailerNumber"+ id +"' type='text' value='"+ trailerNumber +"'/>";
+						tagNumber = "<input id='tagNumber"+ id +"' type='text' value='"+ tagNumber +"'/>";
+						driverName = "<input id='driverName"+ id +"' type='text' value='"+ driverName +"'/>";
+						driverPhone = "<input id='driverPhone"+ id +"' type='text' value='"+ driverPhone +"'/>";
+						checkDriverBT = "<input type='button' value='Check Driver In' onclick='btnTest("+ id +");'/>";
+						
+						$( '#atlDriverCheckinTable' ).dataTable().fnAddData(
+						[
+							loadNumber,
+							carrierName,
+							pickUpTime,
+							driverType,
+							tractorNumber,
+							trailerNumber,
+							tagNumber,
+							driverName,
+							driverPhone,
+							bolScanned,
+							estimatedCost,
+							checkDriverBT
+						]);
+					});
+				}
+			});
+		}
+		
+function nullResponses( response )
+{
+	if( !response )
+	{
+		return "";
+	}
+	else
+	{
+		return response;
+	}
+}
+
+var atlDriverCheckin = $( '#atlDriverCheckinTable' ).dataTable(
+{
+	"aaData":[
+	],
+	"jQueryUI":true,
+	"sPaginationType":"full_numbers",
+	"sDom": "<T><W><'clear'>lfrtip>",
+	"iDisplayLength":100
+});
+
+$( '#facSelect' ).buttonset().click(function()
+		{
+			getData();
+		});
+
+////////////////////////////////////////////////////////////////
+	$( document ).ready( function()
+	{
+		$( "input[name='facSelect']" ).show();
+		$( "input[name='facSelect']" ).css({"position":"absolute", "top": "-9999px", "left": "-9999px"});
+	});
+</script>
