@@ -72,7 +72,7 @@
 		<br>
 		Special Notes:<textarea id='specialNotesTA'></textarea>
 		<br>
-		<input id='spId' value='fuck'/>
+		<input id='spId'/>
 		<br>
 		<input id='driverTeam'/>
 	</div>
@@ -336,6 +336,7 @@ $(function()
 		{
 			OK:function()
 			{
+				alert(tractorNumberWR);
 				function validationDCI( _ID )
 				{
 					tractorNumberWR = $( "#tractorInput" ).val();
@@ -349,7 +350,7 @@ $(function()
 					arrivalTimeWR = $( "#arrivalTimeInput" ).val();
 					specialNotesWR = $( "#specialNotesTA" ).val();
 					isDriverTeam = $( "#driverTeam" ).val();
-					idToWrite = $( "#spId" ).val();
+					spId = $( "#spId" ).val();
 					
 					if( tractorNumberWR == "" )
 					{
@@ -393,7 +394,7 @@ $(function()
 						async: false,
 						batchCmd: "Update",
 						listName: "TL Dashboard",
-						ID: idToWrite,
+						ID: spId,
 						valuepairs: [["Tractor_x0020__x0023_", tractorNumberWR], 
 										["Trailor_x0023_", trailerNumberWR],
 										["Tag_x0023_", tagNumberWR],

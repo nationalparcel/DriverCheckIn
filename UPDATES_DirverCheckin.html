@@ -42,9 +42,6 @@
 			</tr>
 		</thead>
 	</table>
-	<div id='waitGear'>
-		<span class='center' style="font-weight:bold;" id='waitMessage'></span>
-	</div>
 	<div id="checkInDialog" title="Driver Check-In">
 		*Tractor #:<input id='tractorInput'/>
 		<br>
@@ -72,7 +69,7 @@
 		<br>
 		Special Notes:<textarea id='specialNotesTA'></textarea>
 		<br>
-		<input id='spId' value='fuck'/>
+		<input id='spId'/>
 		<br>
 		<input id='driverTeam'/>
 	</div>
@@ -83,15 +80,7 @@
 
 <script>
 ////////////////////////////////////////////////////////////////////////////////////////
-$( '#waitGear' ).dialog(
-{
-	autoOpen:false,
-	width: 200,
-	resizable:false,
-	modal:true
-});
-$( '#waitGear' ).dialog("widget").find(".ui-dialog-titlebar").hide();
-$( '#waitGear' ).dialog("widget").find(".ui-dialog-titlebar-close").hide();
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -349,7 +338,7 @@ $(function()
 					arrivalTimeWR = $( "#arrivalTimeInput" ).val();
 					specialNotesWR = $( "#specialNotesTA" ).val();
 					isDriverTeam = $( "#driverTeam" ).val();
-					idToWrite = $( "#spId" ).val();
+					spId = $( "#spId" ).val();
 					
 					if( tractorNumberWR == "" )
 					{
@@ -393,7 +382,7 @@ $(function()
 						async: false,
 						batchCmd: "Update",
 						listName: "TL Dashboard",
-						ID: idToWrite,
+						ID: spId,
 						valuepairs: [["Tractor_x0020__x0023_", tractorNumberWR], 
 										["Trailor_x0023_", trailerNumberWR],
 										["Tag_x0023_", tagNumberWR],
