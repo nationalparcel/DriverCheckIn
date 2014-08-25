@@ -21,6 +21,7 @@
 		<input type="radio" id="laxRadio" value="LAX" name="facSelect"/><label for="laxRadio">LAX</label>
 		<input type="radio" id="mcoRadio" value="MCO" name="facSelect"/><label for="mcoRadio">MCO</label>
 		<input type="radio" id="MIARadio" value="MIA" name="facSelect"/><label for="MIARadio">MIA</label>
+		<input type="radio" id="mkeRadio" value="MKE" name="facSelect"/><label for="mkeRadio">MKE</label>
 		<input type="radio" id="tpaRadio" value="TPA" name="facSelect"/><label for="tpaRadio">TPA</label>
 	</div>
 	<br><br>
@@ -33,7 +34,8 @@
 				<th>Driver Type</th>
 				<th>Tractor#</th>
 				<th>Trailor#</th>
-				<th>Tag#</th>
+				<th>Tractor Tag#</th>
+				<th>Trailer Tag#</th>
 				<th>Drivers Name</th>
 				<th>Drivers Phone</th>
 				<th>BOL Scanned</th>
@@ -46,13 +48,19 @@
 		<span class='center' style="font-weight:bold;" id='waitMessage'></span>
 	</div>
 	<div id="checkInDialog" title="Driver Check-In">
+		<span style='font-weight:bold;' id='currentLoadNumber'></span>
+		<br>
+		<br>
+		*Trailer#:<input id='trailorInput'/>
+		<br>
+		<br>
 		*Tractor #:<input id='tractorInput'/>
 		<br>
 		<br>
-		*Trailor#:<input id='trailorInput'/>
+		*Tractor Tag#:<input id='tagInput'/>
 		<br>
 		<br>
-		*Tag#:<input id='tagInput'/>
+		*Trailer Tag#:<input id='trailTagInput'/>
 		<br>
 		<br>
 		*Driver One Name:<input id='driverOneNameInput'/>
@@ -89,6 +97,20 @@ $( '#arrivalTimeInput' ).datetimepicker(
 });
 $( '#arrivalTimeInput' ).datepicker('option','dateFormat','yy-mm-dd');
 
+function fnGetCurrentDate()
+{
+	var curDate = new Date();
+	date = ("0"+curDate.getDate()).slice(-2);
+	month = ("0"+(curDate.getMonth()+1)).slice(-2);
+	//month = month + 1;
+	year = curDate.getFullYear();
+	hour = ("0"+curDate.getHours()).slice(-2);
+	mins = ("0"+curDate.getMinutes()).slice(-2);
+	secs = ("0"+curDate.getSeconds()).slice(-2);
+	curDate = year + "-" + month + "-" + date + " " + hour + ":" + mins + ":" + secs;
+	return curDate;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 $( "#hiddenFields" ).css({"position":"absolute", "top": "-9999px", "left": "-9999px"});
@@ -108,6 +130,9 @@ function convertDate (date)
 
 function btnTest(id)
 {
+	var row = $( "#tractorNumber" +id ).closest('tr');
+	window.nRow = row[0];
+	
 	$( '#id' +id).show()
 	$( '#id' +id).css({"position":"absolute", "top": "-9999px", "left": "-9999px"});
 	
@@ -122,6 +147,7 @@ function btnTest(id)
 	$( '#specialNotesTA' ).val($( "#specalInt" +id ).text());
 	$( '#spId' ).val($( "#id" +id ).text());
 	$( '#driverTeam' ).val($( "#driverType" +id ).text());
+	$( "#trailTagInput" ).val($( "#trailTagNumber" +id ).text());
 	
 	if( $( '#driverTeam' ).val() == "Solo" )
 	{
@@ -136,6 +162,9 @@ function btnTest(id)
 	
 	if( $( "#bolScanned" +id ).text() != "No" )
 	{
+		getLoadNumber = $( '#loadNumber' +id ).text();
+		$( '#currentLoadNumber' ).text( getLoadNumber );
+		$( '#arrivalTimeInput' ).val( fnGetCurrentDate );
 		$( '#checkInDialog' ).dialog( 'open' );
 	}
 	else
@@ -169,7 +198,8 @@ function getData()
 							"<FieldRef Name='Driver2_x0020_Name'/>"+
 							"<FieldRef Name='Driver2_x0020_Phone'/>"+
 							"<FieldRef Name='Actual_x0020_Arrival_x0020_Time_'/>"+
-							"<FieldRef Name='ows_Load_x0020_Notes'/>"+
+							"<FieldRef Name='Load_x0020_Notes'/>"+
+							"<FieldRef Name='trailerTagNumber'/>"+
 						"</ViewFields>",
 		CAMLQuery:  "<Query>"+
 						"<Where>"+
@@ -198,7 +228,7 @@ function getData()
 								"</IsNotNull>"+
 							"</And>"+
 								"<Eq>"+
-									"<FieldRef Name='MO'/>"+
+									"<FieldRef Name='trackingOpsFilterMO'/>"+
 									"<Value Type='Text'>"+ $( "input[name='facSelect']:checked" ).val() +"</Value>"+
 								"</Eq>"+
 							"</And>"+
@@ -229,6 +259,7 @@ function getData()
 						driverTwoPhone = $(this).attr("ows_Driver2_x0020_Phone");
 						actualArrival = $(this).attr("ows_Actual_x0020_Arrival_x0020_Time_");
 						specialInst = $(this).attr("ows_Load_x0020_Notes");
+						trailTagNumber = $(this).attr("ows_trailerTagNumber");
 						
 						loadNumber = nullResponses(loadNumber);
 						carrierName = nullResponses(carrierName);
@@ -245,6 +276,7 @@ function getData()
 						driverTwoPhone = nullResponses(driverTwoPhone);
 						actualArrival = nullResponses(actualArrival);
 						specialInst = nullResponses(specialInst);
+						trailTagNumber = nullResponses(trailTagNumber);
 						
 						if( bolScanned == "0" )
 						{
@@ -263,9 +295,11 @@ function getData()
 							estimatedCost = "$" + estimatedCost.split( "." )[0];
 						}
 						
+						loadNumber = "<span id='loadNumber" +id+ "'>" +loadNumber+ "</span>";
 						tractorNumber = "<span id='tractorNumber"+ id +"'>"+ tractorNumber +"</span>";
 						trailerNumber = "<span id='trailerNumber"+ id +"'>"+ trailerNumber +"</span>";
 						tagNumber = "<span id='tagNumber"+ id +"'>"+ tagNumber +"</span>";
+						trailTagNumber = "<span id='trailTagNumber"+ id +"'>"+ trailTagNumber +"</span>";
 						driverName = "<span id='driverName"+ id +"'>"+ driverName +"</span>";
 						driverPhone = "<span id='driverPhone"+ id +"'>"+ driverPhone +"</span>";
 						checkDriverBT = "<input type='button' value='Check Driver In' onclick='btnTest("+ id +");'/>";
@@ -285,6 +319,7 @@ function getData()
 							tractorNumber,
 							trailerNumber,
 							tagNumber,
+							trailTagNumber,
 							driverName,
 							driverPhone,
 							bolScanned,
@@ -346,18 +381,23 @@ $(function()
 					specialNotesWR = $( "#specialNotesTA" ).val();
 					isDriverTeam = $( "#driverTeam" ).val();
 					idToWrite = $( "#spId" ).val();
+					trailTagNumberWR = $( "#trailTagInput" ).val();
 					
-					if( tractorNumberWR == "" )
-					{
-						return "Please fill in Tractor Number";
-					}
 					if( trailerNumberWR == "" )
 					{
 						return "Please fill in Trailer Number";
 					}
+					if( tractorNumberWR == "" )
+					{
+						return "Please fill in Tractor Number";
+					}
 					if( tagNumberWR == "" )
 					{
-						return "Please fill in Tag Number";
+						return "Please fill in Tractor Tag Number";
+					}
+					if( trailTagNumberWR == "" )
+					{
+						return "Please fill in Trailer Tag Number";
 					}
 					if( driverNameWR == "" )
 					{
@@ -377,16 +417,19 @@ $(function()
 						{
 							return "Please fill in Driver Two Phone";
 						}
+					else
+					{
+					}
 					}
 					//if( bolScanned == "No" )
 					//{
 					//	return "Please Scan BOL";
 					//}
-					
+					atlDriverCheckin.fnDeleteRow( window.nRow, null, true );
 					$().SPServices(
 					{
 						operation: "UpdateListItems",
-						async: false,
+						async: true,
 						batchCmd: "Update",
 						listName: "TL Dashboard",
 						ID: idToWrite,
@@ -399,11 +442,12 @@ $(function()
 										["Driver2_x0020_Phone", driverTwoPhoneWR],
 										["Actual_x0020_Arrival_x0020_Time_", arrivalTimeWR],
 										["Load_x0020_Notes", specialNotesWR],
-										["DriverCheckinComplete", "1"]
+										["DriverCheckinComplete", "1"],
+										["trailerTagNumber", trailTagNumberWR]
 									],
 						completefunc: function( xData, Status )
 						{
-							getData();
+							//getData();
 							//["DriverCheckinComplete", "1"]
 						}
 					});
