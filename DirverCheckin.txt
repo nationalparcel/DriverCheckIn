@@ -51,22 +51,22 @@
 		<span style='font-weight:bold;' id='currentLoadNumber'></span>
 		<br>
 		<br>
-		*Trailer#:<input id='trailorInput'/>
+		<span style="color:red;">*</span>Trailer#:<input id='trailorInput'/>
 		<br>
 		<br>
-		*Tractor #:<input id='tractorInput'/>
+		<span style="color:red;">*</span>Tractor #:<input id='tractorInput'/>
 		<br>
 		<br>
-		*Tractor Tag#:<input id='tagInput'/>
+		<span style="color:red;">*</span>Trailer Tag#:<input id='trailTagInput'/>
 		<br>
 		<br>
-		*Trailer Tag#:<input id='trailTagInput'/>
+		<span style="color:red;">*</span>Tractor Tag#:<input id='tagInput'/>
 		<br>
 		<br>
-		*Driver One Name:<input id='driverOneNameInput'/>
+		<span style="color:red;">*</span>Driver One Name:<input id='driverOneNameInput'/>
 		<br>
 		<br>
-		*Driver One Phone:<input id='driverOnePhoneInput'/>
+		<span style="color:red;">*</span>Driver One Phone:<input id='driverOnePhoneInput'/>
 		<br>
 		<br>
 		Driver Two Name:<input id='driverTwoNameInput'/>
