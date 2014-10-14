@@ -23,6 +23,7 @@
 		<input type="radio" id="MIARadio" value="MIA" name="facSelect"/><label for="MIARadio">MIA</label>
 		<input type="radio" id="mkeRadio" value="MKE" name="facSelect"/><label for="mkeRadio">MKE</label>
 		<input type="radio" id="tpaRadio" value="TPA" name="facSelect"/><label for="tpaRadio">TPA</label>
+        <input type="radio" id="otherRadio" value="Other" name="facSelect"/><label for="otherRadio">Other</label>
 	</div>
 	<br><br>
 	<table id='atlDriverCheckinTable' style='text-align:center'>
@@ -160,23 +161,110 @@ function btnTest(id)
 		$("#driverTwoPhoneInput").removeAttr('disabled');
 	}
 	
-	if( $( "#bolScanned" +id ).text() != "No" )
-	{
+	//if( $( "#bolScanned" +id ).text() != "No" )
+	//{
 		getLoadNumber = $( '#loadNumber' +id ).text();
 		$( '#currentLoadNumber' ).text( getLoadNumber );
 		$( '#arrivalTimeInput' ).val( fnGetCurrentDate );
 		$( '#checkInDialog' ).dialog( 'open' );
-	}
-	else
-	{
-		alert( "Please Scan BOL" );
-	}
+	//}
+	//else
+	//{
+		//alert( "Please Scan BOL" );
+	//}
 }
 
 function getData()
 {
 	atlDriverCheckin.fnClearTable();
 	$('#hiddenFields').html("<div id='hiddenFields'></div>");
+
+	var query = "<Query>" +
+						"<Where>" +
+							"<And><And><And><And><And><And>" +
+								"<Neq>" +
+									"<FieldRef Name='Carrier_x0020_Name'/>" +
+									"<Value Type='Text'>NPL DEDICATED, LLC</Value>" +
+								"</Neq>" +
+								"<Neq>" +
+									"<FieldRef Name='Carrier_x0020_Name'/>" +
+									"<Value Type='Text'>SENSIBLE DELIVERY SOLUTIONS INC</Value>" +
+								"</Neq>" +
+							"</And>" +
+								"<Neq>" +
+									"<FieldRef Name='Carrier_x0020_Name'/>" +
+									"<Value Type='Text'>FEDEX</Value>" +
+								"</Neq>" +
+							"</And>" +
+								"<Neq>" +
+									"<FieldRef Name='Carrier_x0020_Name'/>" +
+									"<Value Type='Text'>LAND AIR</Value>" +
+								"</Neq>" +
+							"</And>" +
+								"<IsNotNull>" +
+									"<FieldRef Name='Carrier_x0020_Name'/>" +
+								"</IsNotNull>" +
+							"</And>" +
+								"<Eq>" +
+									"<FieldRef Name='trackingOpsFilterMO'/>" +
+									"<Value Type='Text'>" + $("input[name='facSelect']:checked").val() + "</Value>" +
+								"</Eq>" +
+							"</And>" +
+								"<Eq>" +
+									"<FieldRef Name='DriverCheckinComplete'/>" +
+									"<Value Type='Text'>FALSE</Value>" +
+								"</Eq>" +
+							"</And>" +
+						"</Where>" +
+					"</Query>";
+	if ($("input[name='facSelect']:checked").val() == "Other")
+	{
+	    query = "<Query>"+
+                    "<Where>"+
+                        "<And><And><And><And><And><And><And>" +
+                            "<Eq>" +
+                                "<FieldRef Name='DriverCheckinComplete'/>" +
+                                "<Value Type='Text'>FALSE</Value" +
+                            "</Eq>"+
+                            "<Neq>"+
+                                "<FieldRef Name='trackingOpsFilterMO'/>"+
+                                "<Value Type='Text'>ATL</Value>"+
+                            "</Neq>" +
+                        "</And>"+
+                            "<Neq>"+
+                                "<FieldRef Name='trackingOpsFilterMO'/>"+
+                                "<Value Type='Text'>BDL</Value>"+
+                            "</Neq>"+
+                        "</And>"+
+                            "<Neq>"+
+                                "<FieldRef Name='trackingOpsFilterMO'/>"+
+                                "<Value Type='Text'>BWI</Value>"+
+                            "</Neq>"+
+                        "</And>"+
+                            "<Neq>"+
+                                "<FieldRef Name='trackingOpsFilterMO'/>"+
+                                "<Value Type='Text'>MCO</Value>"+
+                            "</Neq>"+
+                        "</And>"+
+                            "<Neq>"+
+                                "<FieldRef Name='trackingOpsFilterMO'/>"+
+                                "<Value Type='Text'>MIA</Value>"+
+                            "</Neq>"+
+                        "</And>"+
+                            "<Neq>"+
+                                "<FieldRef Name='trackingOpsFilterMO'/>"+
+                                "<Value Type='Text'>MKE</Value>"+
+                            "</Neq>"+
+                        "</And>"+
+                            "<Neq>"+
+                                "<FieldRef Name='trackingOpsFilterMO'/>"+
+                                "<Value Type='Text'>TPA</Value>"+
+                            "</Neq>"+
+                        "</And>"+
+                    "</Where>"+
+                "</Query>"
+	}
+	
 	$().SPServices(
 	{
 		operation: "GetListItems",
@@ -201,44 +289,7 @@ function getData()
 							"<FieldRef Name='Load_x0020_Notes'/>"+
 							"<FieldRef Name='trailerTagNumber'/>"+
 						"</ViewFields>",
-		CAMLQuery:  "<Query>"+
-						"<Where>"+
-							"<And><And><And><And><And><And>"+
-								"<Neq>"+
-									"<FieldRef Name='Carrier_x0020_Name'/>"+
-									"<Value Type='Text'>NPL DEDICATED, LLC</Value>"+
-								"</Neq>"+
-								"<Neq>"+
-									"<FieldRef Name='Carrier_x0020_Name'/>"+
-									"<Value Type='Text'>SENSIBLE DELIVERY SOLUTIONS INC</Value>"+
-								"</Neq>"+
-							"</And>"+
-								"<Neq>"+
-									"<FieldRef Name='Carrier_x0020_Name'/>"+
-									"<Value Type='Text'>FEDEX</Value>"+
-								"</Neq>"+
-							"</And>"+
-								"<Neq>"+
-									"<FieldRef Name='Carrier_x0020_Name'/>"+
-									"<Value Type='Text'>LAND AIR</Value>"+
-								"</Neq>"+
-							"</And>"+
-								"<IsNotNull>"+
-									"<FieldRef Name='Carrier_x0020_Name'/>"+
-								"</IsNotNull>"+
-							"</And>"+
-								"<Eq>"+
-									"<FieldRef Name='trackingOpsFilterMO'/>"+
-									"<Value Type='Text'>"+ $( "input[name='facSelect']:checked" ).val() +"</Value>"+
-								"</Eq>"+
-							"</And>"+
-								"<Eq>"+
-									"<FieldRef Name='DriverCheckinComplete'/>"+
-									"<Value Type='Text'>FALSE</Value>"+
-								"</Eq>"+
-							"</And>"+
-						"</Where>"+
-					"</Query>",
+		CAMLQuery:  query,
 				completefunc: function( xData, Status )
 				{
 					$(xData.responseXML).SPFilterNode("z:row").each(function()
