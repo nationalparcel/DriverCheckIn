@@ -219,50 +219,50 @@ function getData()
 					"</Query>";
 	if ($("input[name='facSelect']:checked").val() == "Other")
 	{
-	    query = "<Query>"+
-                    "<Where>"+
+	    query = "<Query>" +
+                    "<Where>" +
                         "<And><And><And><And><And><And><And>" +
                             "<Eq>" +
                                 "<FieldRef Name='DriverCheckinComplete'/>" +
                                 "<Value Type='Text'>FALSE</Value" +
-                            "</Eq>"+
-                            "<Neq>"+
-                                "<FieldRef Name='trackingOpsFilterMO'/>"+
-                                "<Value Type='Text'>ATL</Value>"+
+                            "</Eq>" +
+                            "<Neq>" +
+                                "<FieldRef Name='trackingOpsFilterMO'/>" +
+                                "<Value Type='Text'>ATL</Value>" +
                             "</Neq>" +
-                        "</And>"+
-                            "<Neq>"+
-                                "<FieldRef Name='trackingOpsFilterMO'/>"+
-                                "<Value Type='Text'>BDL</Value>"+
-                            "</Neq>"+
-                        "</And>"+
-                            "<Neq>"+
-                                "<FieldRef Name='trackingOpsFilterMO'/>"+
-                                "<Value Type='Text'>BWI</Value>"+
-                            "</Neq>"+
-                        "</And>"+
-                            "<Neq>"+
-                                "<FieldRef Name='trackingOpsFilterMO'/>"+
-                                "<Value Type='Text'>MCO</Value>"+
-                            "</Neq>"+
-                        "</And>"+
-                            "<Neq>"+
-                                "<FieldRef Name='trackingOpsFilterMO'/>"+
-                                "<Value Type='Text'>MIA</Value>"+
-                            "</Neq>"+
-                        "</And>"+
-                            "<Neq>"+
-                                "<FieldRef Name='trackingOpsFilterMO'/>"+
-                                "<Value Type='Text'>MKE</Value>"+
-                            "</Neq>"+
-                        "</And>"+
-                            "<Neq>"+
-                                "<FieldRef Name='trackingOpsFilterMO'/>"+
-                                "<Value Type='Text'>TPA</Value>"+
-                            "</Neq>"+
-                        "</And>"+
-                    "</Where>"+
-                "</Query>"
+                        "</And>" +
+                            "<Neq>" +
+                                "<FieldRef Name='trackingOpsFilterMO'/>" +
+                                "<Value Type='Text'>BDL</Value>" +
+                            "</Neq>" +
+                        "</And>" +
+                            "<Neq>" +
+                                "<FieldRef Name='trackingOpsFilterMO'/>" +
+                                "<Value Type='Text'>BWI</Value>" +
+                            "</Neq>" +
+                        "</And>" +
+                            "<Neq>" +
+                                "<FieldRef Name='trackingOpsFilterMO'/>" +
+                                "<Value Type='Text'>MCO</Value>" +
+                            "</Neq>" +
+                        "</And>" +
+                            "<Neq>" +
+                                "<FieldRef Name='trackingOpsFilterMO'/>" +
+                                "<Value Type='Text'>MIA</Value>" +
+                            "</Neq>" +
+                        "</And>" +
+                            "<Neq>" +
+                                "<FieldRef Name='trackingOpsFilterMO'/>" +
+                                "<Value Type='Text'>MKE</Value>" +
+                            "</Neq>" +
+                        "</And>" +
+                            "<Neq>" +
+                                "<FieldRef Name='trackingOpsFilterMO'/>" +
+                                "<Value Type='Text'>TPA</Value>" +
+                            "</Neq>" +
+                        "</And>" +
+                    "</Where>" +
+                "</Query>";
 	}
 	
 	$().SPServices(
